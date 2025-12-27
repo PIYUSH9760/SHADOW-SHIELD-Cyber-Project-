@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Locked — Shadow Shield</title>
+  <style>
+    html,body { height:100%; margin:0; font-family: Arial, sans-serif; background:#111; color:#fff; }
+    .wrap { display:flex; align-items:center; justify-content:center; height:100%; }
+    .card {
+      width:520px;
+      background:#0f1720;
+      border-radius:12px;
+      padding:28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      text-align:center;
+    }
+    h1 { margin:0 0 8px 0; font-size:24px; color:#ff4d4f; }
+    p { margin:0 0 18px 0; color:#ddd; }
+    input[type="password"] {
+      width:80%;
+      padding:10px;
+      border-radius:6px;
+      border:none;
+      margin-bottom:12px;
+      font-size:16px;
+    }
+    .btn {
+      padding:10px 14px;
+      margin:6px;
+      border-radius:6px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn-primary { background:#22c55e; color:#072; }
+    .btn-danger { background:#ef4444; color:#fff; }
+    .msg { margin-top:12px; min-height:20px; color:#ffd; }
+    .small { font-size:12px; color:#bbb; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>System Locked</h1>
+      <p>Security freeze active. Enter the unlock passcode to restore the system.</p>
+
+      <input id="passcode" type="password" placeholder="Enter passcode" autocomplete="off" />
+
+      <div>
+        <button id="unlockBtn" class="btn btn-primary">Unlock (9760)</button>
+        <button id="exitBtn" class="btn btn-danger">Exit Prototype (Backup)</button>
+      </div>
+
+      <div class="msg" id="msgArea"></div>
+      <div class="small">If unlock fails repeatedly, use &ldquo;Exit Prototype&rdquo; as a backup.</div>
+    </div>
+  </div>
+
+  <script>
+    // Use the preload-provided API
+    const unlockBtn = document.getElementById("unlockBtn");
+    const exitBtn = document.getElementById("exitBtn");
+    const passInput = document.getElementById("passcode");
+    const msg = document.getElementById("msgArea");
+
+    // Clear message helper
+    function setMsg(text, color = "#ffd") {
+      msg.style.color = color;
+      msg.innerText = text;
+    }
+
+    unlockBtn.addEventListener("click", () => {
+      setMsg("Trying unlock...", "#ffd");
+      const code = passInput.value ? String(passInput.value).trim() : "";
+      // send to main
+      window.freezeApi.attemptUnlock(code);
+    });
+
+    passInput.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") unlockBtn.click();
+    });
+
+    exitBtn.addEventListener("click", () => {
+      // backup exit (existing handler in main will close freeze window)
+      window.freezeApi.exitPrototype();
+    });
+
+    // Listen for result from main
+    window.freezeApi.onUnlockResult((data) => {
+      if (!data) return;
+      if (data.ok) {
+        setMsg("Unlocked successfully — restoring system...", "#9f9");
+        // small delay so user sees message
+        setTimeout(() => {
+          // nothing else here; main closes the freeze window and reopens login
+        }, 700);
+      } else {
+        setMsg(data.msg || "Invalid passcode", "#ff7b7b");
+        // flash input
+        passInput.value = "";
+        passInput.focus();
+      }
+    });
+
+    // Focus input
+    passInput.focus();
+  </script>
+</body>
+</html>

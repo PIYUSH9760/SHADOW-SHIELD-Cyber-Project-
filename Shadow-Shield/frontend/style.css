@@ -1,0 +1,68 @@
+body {
+    background: #111;
+    color: #fff;
+    font-family: Arial;
+    margin: 0;
+    -webkit-app-region: drag;
+}
+
+.box {
+    margin: 20px;
+    padding: 20px;
+    background: #222;
+    border-radius: 10px;
+    -webkit-app-region: no-drag;
+}
+
+input, button {
+    width: 90%;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    -webkit-app-region: no-drag;
+}
+
+button {
+    background: #4caf50;
+    color: white;
+    cursor: pointer;
+}
+
+/* Modal Background */
+.modal {
+    display: none;
+    position: fixed;
+    left:0; right:0; top:0; bottom:0;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+/* Modal Box */
+.modal-content {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 300px;
+    color: white;
+}
+
+/* Vault File List */
+.modal-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.modal-content li {
+    padding: 8px;
+    background: #333;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.modal-content li:hover {
+    background: #444;
+}
